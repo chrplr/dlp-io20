@@ -34,7 +34,11 @@ It is sold by, e.g.,[rs-online](https://co-en.rs-online.com/product/dlp-design/d
 
 This means that the DLP is accessible on `/dev/ttyUSB0` 
 
+### Montage
 
+Here is a simple montage with a morse key connecting AN4 to +5V when pressed.
+
+![](montage-dlp-io20.jpg)
 
 
 ## Usage 
