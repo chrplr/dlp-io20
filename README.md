@@ -1,10 +1,10 @@
 # dlp-io20
 
-The DLP-IO20 is a simple USB data acquisition module which permits to receive or send TTL signals. From a software point of view, it appears as a serial device which can be controlled by writing and reading characters.
+The DLP-IO20 is a simple USB data acquisition module which permits to receive or send 0-5V TTL signals. From a software point of view, it is controlled by writing and reading on a virtual serial device.
 
-A full description of the device is available at <https://www.dlpdesign.com/usb/dlp-io20-ds-v11.pdf>
+A full description of the DLP-IO20 is available at <https://www.dlpdesign.com/usb/dlp-io20-ds-v11.pdf>
 
-It can be bought, for example, at [rs-online](https://co-en.rs-online.com/product/dlp-design/dlp-io20/70372088/)
+It is sold by, e.g.,[rs-online](https://co-en.rs-online.com/product/dlp-design/dlp-io20/70372088/)
 
 
 ## Installation
@@ -49,6 +49,15 @@ This means that the DLP is accessible on `/dev/ttyUSB0`
     dlp = Serial(port='/dev/ttyUSB0', baudrate=115200)  # open serial port
 
     # Check that the board is alive
+    PING = 0x27
+    dlp.write(bytearray([2, PING]))
+    response = dlp.read(1).decode('utf-8')
+    if response == 'Y':
+        print('DLP-IO20 detected')
+    else:
+        print('DLP-IO20 not responding')
+
+    print('Flashing LED')
     FLASH_LED = 0x28
     dlp.write(bytearray([2,FLASH_LED]))  # blink LED D1
 
@@ -59,14 +68,17 @@ This means that the DLP is accessible on `/dev/ttyUSB0`
     SET_HIGH = 1
 
     # Program Channel AN2 as digital output
-    dlp.write(bytearray([5, DIGITAL_IO, 2, DIR_OUPUT, SET_HIGH]))
+    dlp.write(bytearray([5, DIGITAL_IO, 2, DIR_OUTPUT, SET_HIGH]))
     sleep(0.5)
-    dlp.write(bytearray([5, DIGITAL_IO, 2, DIR_OUPUT, SET_LOW]))
+    dlp.write(bytearray([5, DIGITAL_IO, 2, DIR_OUTPUT, SET_LOW]))
     sleep(0.5)
 
-    # Program Channel AN0 as digital input
-    dlp.write(bytearray([5, DIGITAL_IO, 0, DIR_INPUT, 0]))
-    print(dlp.read())
+    # Read Channel AN0 state
+    for _ in range(10):
+        dlp.write(bytearray([5, DIGITAL_IO, 0, DIR_INPUT, 0]))
+        print(ord(dlp.read().decode('utf-8')))
+        sleep(1)
+
 ```    
 
 
